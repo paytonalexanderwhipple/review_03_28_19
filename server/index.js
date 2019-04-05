@@ -1,9 +1,11 @@
 require('dotenv').config();
-const { PORT, CONNECTION_STRING } = process.env;
+const { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env;
 
 const express = require('express');
+const session = require('express-session');
 const massive = require('massive');
-const ctrl = require('./controller/controller.js');
+const pCtrl = require('./controllers/productController.js');
+const aCtrl = require('./controllers/authController.js');
 
 const app = express();
 
@@ -11,16 +13,28 @@ const app = express();
 
 app.use(express.json());
 
+app.use(session({
+	secret: SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false
+}))
+
 massive(CONNECTION_STRING)
 	.then(db => {
 		app.set('db', db);
 		// --- I CAN HEAR YOU! --- //
-		app.listen(PORT, () => console.log(`Something clever on PORT:${PORT}`));
-	})
+		app.listen(SERVER_PORT, () => console.log(`Something clever on PORT:${SERVER_PORT}`));
+	});
 
 // --- ENDPOINTS --- //
 
-app.get('/api/products', ctrl.read);
-app.post('/api/products', ctrl.create);
-app.put('/api/products', ctrl.update);
-app.delete('/api/products', ctrl.delete)
+
+// products
+app.get('/api/products', pCtrl.read);
+app.post('/api/products', pCtrl.create);
+app.put('/api/products', pCtrl.update);
+app.delete('/api/products', pCtrl.delete);
+
+// Auth
+app.post('/api/auth/register', aCtrl.register);
+app.post('/api/auth/login', aCtrl.login);

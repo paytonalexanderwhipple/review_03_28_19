@@ -21,10 +21,8 @@ module.exports = {
 		const db = req.app.get('db');
 		const { id } = req.query;
 		const { desc } = req.body
-
 		await db.product.save({ product_id: id, description: desc }).catch(err => res.sendStatus(500));
 		res.sendStatus(201);
-
 	},
 	delete: async (req, res) => {
 		const db = req.app.get('db');

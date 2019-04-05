@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import store from '../ducks/store';
 import axios from 'axios';
 
 export default class Entry extends Component {
@@ -7,12 +8,13 @@ export default class Entry extends Component {
 		name: '',
 		img: '',
 		desc: '',
-		price: 0
+		price: 0,
+		user: store.getState()
 	}
 
 	handleInput = (event) => {
-		const { name, value } = event.target;
-		this.setState({ [name]: value });
+		const { id, value } = event.target;
+		this.setState({ [id]: value });
 	}
 
 	submit = (e) => {
@@ -30,18 +32,25 @@ export default class Entry extends Component {
 			.catch(err => console.log('bad things are happening'));
 	}
 
+	componentDidMount = () => {
+		console.log(this.state.user);
+		if (!this.state.user.user.isadmin) {
+			this.props.history.push('/');
+		}
+	}
+
 	render() {
 		return (
 			<>
 				<form onSubmit={this.submit}>
-					<label htmlFor="name">Name</label>
-					<input onChange={this.handleInput} type="text" name='name' />
-					<label htmlFor="img">Image</label>
-					<input onChange={this.handleInput} type="text" name='img' />
-					<label htmlFor="desc">Description</label>
-					<input onChange={this.handleInput} type="text" name='desc' />
-					<label htmlFor="price">Price</label>
-					<input onChange={this.handleInput} type="number" name='price' />
+					<label htmlFor="name">Name:</label>
+					<input onChange={this.handleInput} type="text" id='name' />
+					<label htmlFor="img">Image:</label>
+					<input onChange={this.handleInput} type="text" id='img' />
+					<label htmlFor="desc">Description:</label>
+					<input onChange={this.handleInput} type="text" id='desc' />
+					<label htmlFor="price">Price:</label>
+					<input onChange={this.handleInput} type="number" id='price' />
 					<button type="submit">Submit</button>
 				</form>
 			</>

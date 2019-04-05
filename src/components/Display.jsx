@@ -9,6 +9,10 @@ export default class Display extends Component {
 	}
 
 	componentDidMount = () => {
+		this.getProducts();
+	}
+
+	getProducts = () => {
 		axios.get('/api/products')
 			.then(res => {
 				this.setState({ items: res.data })
@@ -18,9 +22,9 @@ export default class Display extends Component {
 
 	render() {
 		return (
-			<>
-				{this.state.items.map(item => <Item key={item.product_id} id={item.product_id} img={item.image_url} desc={item.description} price={item.price} name={item.name} />)}
-			</>
+			<div className='display'>
+				{this.state.items.map(item => <Item key={item.product_id} getProducts={this.getProducts} id={item.product_id} img={item.image_url} desc={item.description} price={item.price} name={item.name} />)}
+			</div>
 		)
 	}
 }
